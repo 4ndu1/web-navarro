@@ -1,42 +1,44 @@
 'use client'
 import ListBox from "@/components/ListBox";
 import SimpleBox from "@/components/SimpleBox";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { api } from "@/services/api";
 
-//pagina principal
 export default function Home() {
+  const [stats, setStats] = useState({ totalStudents: 0, totalTeachers: 0, lastStudent: null });
+  const [students, setStudents] = useState([]);
 
-  const [registros, setRegistros] = useState([
-    { id: 1, Nombre: "Luis Gonzalez", Cedula: "101", Registro: "2023/01/01" },
-    { id: 2, Nombre: "Elena", Cedula: "202", Registro: "2023/01/05" },
-  ]);
-
-  function handleNuevoRegistro(){
-
-    const nuevoRegistro = {
-      id: Date.now(),
-      Nombre: "Nuevo Nombre",
-      Cedula: "31.713.516",
-      Registro: new Date().toLocaleDateString()
-    };
-
-    setRegistros([...registros, nuevoRegistro])
-
-  }
+  useEffect(() => {
+    async function loadData() {
+      const data = await api.getStats();
+      const allStudents = await api.getAllStudents();
+      setStats(data);
+      setStudents(allStudents.slice(0, 5)); // Show recent 5
+    }
+    loadData();
+  }, []);
 
   return (
     <div>
-      <div className="flex flex-row ml-60 mt-30">
-        <div className="flex flex-row space-x-20">
-          <SimpleBox mainText={"800"} subTitle={"Estudiantes totales"} />
-          <SimpleBox mainText={"Luis Gonzalez"} subTitle={"Ultimo Registro"} />
-        </div>
+      <div className="flex flex-row ml-60 mt-30 gap-20">
+        <SimpleBox mainText={stats.totalStudents} subTitle={"Estudiantes totales"} />
+        <SimpleBox mainText={stats.totalTeachers} subTitle={"Profesores totales"} />
       </div>
-      <button onClick={handleNuevoRegistro}>Nuevo registro</button>
+
       <div className="flex flex-row ml-61 mt-20 justify-self-center">
-        <ListBox mainText={"Ultimos Registros"} datos={registros} />
+        <ListBox
+          mainText={"Estudiantes Recientes"}
+          headers={["Nombre", "Cédula", "Registro"]}
+          data={students}
+          renderRow={(student) => (
+            <div className="grid grid-cols-3 gap-10 px-4">
+              <h3>{student.nombre}</h3>
+              <h3>{student.cedula}</h3>
+              <h3>{student.registro}</h3>
+            </div>
+          )}
+        />
       </div>
     </div>
-
   );
 }
