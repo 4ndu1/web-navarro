@@ -1,18 +1,19 @@
+import { Inter } from "next/font/google";
 import "./globals.css";
-import { ClientLayout } from "@/components/ClientLayout";
+import { cn } from "@/lib/utils";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Sistema de Gestión Estudiantil",
-  description: "Gestión de grupos estables estudiantiles",
+  title: "Web Navarro",
+  description: "Sistema de Gestión Estudiantil",
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="es" suppressHydrationWarning>
-      <body className="bg-slate-50 text-slate-900 antialiased min-h-screen">
-        <ClientLayout>
-          {children}
-        </ClientLayout>
+    <html lang="es">
+      <body className={cn(inter.className, "antialiased")}>
+        {children}
       </body>
     </html>
   );

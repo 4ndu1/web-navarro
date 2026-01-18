@@ -1,8 +1,14 @@
 'use client';
 import { useState } from 'react';
-import SearchBar from "@/components/SearchBar";
-import ListBox from "@/components/ListBox";
 import { api } from "@/services/api";
+import Sidebar from "@/components/dashboard/Sidebar";
+import Header from "@/components/dashboard/Header";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Search, Loader2, BookOpen, User, ArrowLeft } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 
 export default function PageProfesores() {
     const [teachers, setTeachers] = useState([]);
@@ -11,14 +17,16 @@ export default function PageProfesores() {
     const [selectedSection, setSelectedSection] = useState(null);
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
 
-    const handleSearch = async (name) => {
+    const handleSearch = async () => {
+        if (!searchTerm) return;
         setLoading(true);
         setSelectedTeacher(null);
         setSelectedSection(null);
         setTeachers([]);
         try {
-            const result = await api.searchTeacherByName(name);
+            const result = await api.searchTeacherByName(searchTerm);
             setTeachers(result);
         } finally {
             setLoading(false);
@@ -39,88 +47,145 @@ export default function PageProfesores() {
     };
 
     return (
-        <div className="flex flex-col items-center mt-10 w-full mb-20">
-            <h1 className="text-3xl font-bold mb-8">Consultar Profesores</h1>
-            <SearchBar onSearch={handleSearch} placeholder="Nombre del profesor" />
+        <div className="flex h-screen bg-gray-50 overflow-hidden">
+            <Sidebar />
+            <div className="flex-1 flex flex-col overflow-hidden">
+                <Header title="Consulta de Profesores" />
+                <main className="flex-1 overflow-y-auto p-6">
+                    <div className="max-w-5xl mx-auto space-y-6">
 
-            {loading && <p className="mt-4">Buscando...</p>}
+                        {/* Search Bar */}
+                        <div className="flex gap-4 items-center">
+                            <Input
+                                placeholder="Nombre del profesor"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="max-w-md"
+                            />
+                            <Button onClick={handleSearch} disabled={loading}>
+                                {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Search className="mr-2 h-4 w-4" />}
+                                Buscar
+                            </Button>
+                        </div>
 
-            {/* Teacher List */}
-            {!selectedTeacher && teachers.length > 0 && (
-                <div className="mt-10">
-                    <ListBox
-                        mainText="Resultados de Búsqueda"
-                        headers={["Nombre", "Especialidad", "Acción"]}
-                        data={teachers}
-                        renderRow={(t) => (
-                            <div className="grid grid-cols-3 gap-10 px-4 items-center">
-                                <h3>{t.nombre}</h3>
-                                <h3>{t.especialidad}</h3>
-                                <button
-                                    onClick={() => handleSelectTeacher(t)}
-                                    className="text-blue-600 hover:underline text-left"
-                                >
-                                    Ver Secciones
-                                </button>
+                        {/* Listado de Profesores */}
+                        {!selectedTeacher && teachers.length > 0 && (
+                            <Card className="animate-in slide-in-from-bottom-4 duration-500">
+                                <CardHeader>
+                                    <CardTitle>Resultados de Búsqueda</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead>Nombre</TableHead>
+                                                <TableHead>Especialidad</TableHead>
+                                                <TableHead className="text-right">Acción</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {teachers.map((t) => (
+                                                <TableRow key={t.id}>
+                                                    <TableCell className="font-medium">{t.nombre}</TableCell>
+                                                    <TableCell><Badge variant="outline">{t.especialidad}</Badge></TableCell>
+                                                    <TableCell className="text-right">
+                                                        <Button variant="ghost" size="sm" onClick={() => handleSelectTeacher(t)} className="text-primary hover:text-primary/80">
+                                                            Ver Secciones
+                                                        </Button>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </CardContent>
+                            </Card>
+                        )}
+
+                        {/* Secciones del Profesor */}
+                        {selectedTeacher && !selectedSection && (
+                            <div className="space-y-4 animate-in slide-in-from-right-4 duration-500">
+                                <Button variant="ghost" onClick={() => setSelectedTeacher(null)} className="pl-0 gap-2">
+                                    <ArrowLeft className="h-4 w-4" /> Volver a resultados
+                                </Button>
+                                <Card>
+                                    <CardHeader className="flex flex-row items-center justify-between pb-2">
+                                        <div className="flex items-center gap-4">
+                                            <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xl">
+                                                {selectedTeacher.nombre.charAt(0)}
+                                            </div>
+                                            <div>
+                                                <CardTitle>{selectedTeacher.nombre}</CardTitle>
+                                                <p className="text-sm text-muted-foreground">{selectedTeacher.especialidad}</p>
+                                            </div>
+                                        </div>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <h3 className="text-lg font-medium mb-4">Secciones Asignadas</h3>
+                                        <Table>
+                                            <TableHeader>
+                                                <TableRow>
+                                                    <TableHead>Materia</TableHead>
+                                                    <TableHead>Año</TableHead>
+                                                    <TableHead>Código</TableHead>
+                                                    <TableHead className="text-right">Acción</TableHead>
+                                                </TableRow>
+                                            </TableHeader>
+                                            <TableBody>
+                                                {sections.map((s) => (
+                                                    <TableRow key={s.id}>
+                                                        <TableCell>{s.nombre}</TableCell>
+                                                        <TableCell>{s.year}</TableCell>
+                                                        <TableCell>{s.code}</TableCell>
+                                                        <TableCell className="text-right">
+                                                            <Button variant="ghost" size="sm" onClick={() => handleSelectSection(s)} className="text-primary hover:text-primary/80">
+                                                                Ver Estudiantes
+                                                            </Button>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
+                                        </Table>
+                                    </CardContent>
+                                </Card>
                             </div>
                         )}
-                    />
-                </div>
-            )}
 
-            {/* Sections List */}
-            {selectedTeacher && !selectedSection && (
-                <div className="mt-10 flex flex-col items-center gap-4">
-                    <button onClick={() => setSelectedTeacher(null)} className="self-start text-gray-500 hover:text-black">
-                        &larr; Volver a resultados
-                    </button>
-                    <div className="bg-blue-50 p-4 rounded w-full text-center mb-4">
-                        Profesor: <strong>{selectedTeacher.nombre}</strong>
+                        {/* Estudiantes de la Sección */}
+                        {selectedSection && (
+                            <div className="space-y-4 animate-in slide-in-from-right-4 duration-500">
+                                <Button variant="ghost" onClick={() => setSelectedSection(null)} className="pl-0 gap-2">
+                                    <ArrowLeft className="h-4 w-4" /> Volver a secciones
+                                </Button>
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>Estudiantes en {selectedSection.nombre} ({selectedSection.year})</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <Table>
+                                            <TableHeader>
+                                                <TableRow>
+                                                    <TableHead>Nombre</TableHead>
+                                                    <TableHead>Cédula</TableHead>
+                                                    <TableHead>Nota Actual</TableHead>
+                                                </TableRow>
+                                            </TableHeader>
+                                            <TableBody>
+                                                {students.map((s, idx) => (
+                                                    <TableRow key={idx}>
+                                                        <TableCell className="font-medium">{s.nombre}</TableCell>
+                                                        <TableCell>{s.cedula}</TableCell>
+                                                        <TableCell><Badge variant="secondary">{s.grade} pts</Badge></TableCell>
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
+                                        </Table>
+                                    </CardContent>
+                                </Card>
+                            </div>
+                        )}
                     </div>
-                    <ListBox
-                        mainText="Secciones Asignadas"
-                        headers={["Materia", "Año", "Código", "Acción"]}
-                        data={sections}
-                        renderRow={(s) => (
-                            <div className="grid grid-cols-4 gap-4 px-4 items-center">
-                                <h3>{s.nombre}</h3>
-                                <h3>{s.year}</h3>
-                                <h3>{s.code}</h3>
-                                <button
-                                    onClick={() => handleSelectSection(s)}
-                                    className="text-blue-600 hover:underline text-left"
-                                >
-                                    Ver Estudiantes
-                                </button>
-                            </div>
-                        )}
-                    />
-                </div>
-            )}
-
-            {/* Students List */}
-            {selectedSection && (
-                <div className="mt-10 flex flex-col items-center gap-4">
-                    <button onClick={() => setSelectedSection(null)} className="self-start text-gray-500 hover:text-black">
-                        &larr; Volver a secciones
-                    </button>
-                    <div className="bg-green-50 p-4 rounded w-full text-center mb-4">
-                        Sección: <strong>{selectedSection.nombre} ({selectedSection.year})</strong>
-                    </div>
-                    <ListBox
-                        mainText="Estudiantes Inscritos"
-                        headers={["Nombre", "Cédula", "Nota Actual"]}
-                        data={students}
-                        renderRow={(s) => (
-                            <div className="grid grid-cols-3 gap-10 px-4">
-                                <h3>{s.nombre}</h3>
-                                <h3>{s.cedula}</h3>
-                                <h3 className="font-bold">{s.grade} pts</h3>
-                            </div>
-                        )}
-                    />
-                </div>
-            )}
+                </main>
+            </div>
         </div>
     );
 }

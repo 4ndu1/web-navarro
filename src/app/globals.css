@@ -1,24 +1,32 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #ffffff;
+  --foreground: #09090b;
+  --sidebar: #09090b;
+  --sidebar-foreground: #fafafa;
   --primary: #2563eb;
+  --primary-foreground: #ffffff;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
   --card: #ffffff;
-  --border: #e2e8f0;
+  --card-foreground: #09090b;
+  --border: #f4f4f5;
+  /* Lighter border */
+  --input: #f4f4f5;
+  --ring: #2563eb;
+  --radius: 0.75rem;
+  /* Softer, larger radius */
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', -apple-system, system-ui, sans-serif;
 }
 
 @layer utilities {
-  .btn-primary {
-    @apply px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-sm font-medium cursor-pointer;
-  }
-  .card-base {
-    @apply bg-white rounded-xl border border-slate-100 shadow-sm p-6;
+  .border-border {
+    border-color: var(--border);
   }
 }
