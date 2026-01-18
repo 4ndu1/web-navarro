@@ -1,67 +1,86 @@
-import { students, teachers, sections, enrollments } from './mockData';
+const API_URL = 'http://localhost:3001';
 
 export const api = {
     getStats: async () => {
+        // We haven't implemented getStats on backend yet, we can mock it or fetch students + teachers
+        // For now, let's just fetch all students to get count
+        const studentsRes = await fetch(`${API_URL}/students`);
+        const students = await studentsRes.json();
+        const teachersRes = await fetch(`${API_URL}/teachers`);
+        const teachers = await teachersRes.json();
+
         return {
             totalStudents: students.length,
             totalTeachers: teachers.length,
-            lastStudent: students[students.length - 1],
+            lastStudent: students[students.length - 1] || null,
         };
     },
 
     getAllStudents: async () => {
-        return students;
+        const res = await fetch(`${API_URL}/students`);
+        return res.json();
     },
 
     searchStudentByCedula: async (cedula) => {
-        // Simulate delay
-        await new Promise(resolve => setTimeout(resolve, 300));
-
-        const student = students.find(s => s.cedula === cedula);
+        const res = await fetch(`${API_URL}/students/search?cedula=${cedula}`);
+        const student = await res.json();
         if (!student) return null;
 
-        // Get student's enrollments
-        const studentEnrollments = enrollments.filter(e => e.studentId === student.id);
+        // Backend returns student with enrollments -> section -> teacher
+        // We need to map to format expected by UI if different
+        // UI expects: enrollments: [{ ..., sectionName, teacherName }]
+        // Backend returns: enrollments: [{ section: { nombre, teacher: { nombre } } }]
 
-        // Enrich with section data
-        const detailedEnrollments = studentEnrollments.map(e => {
-            const section = sections.find(s => s.id === e.sectionId);
-            const teacher = teachers.find(t => t.id === section.teacherId);
-            return {
-                ...e,
-                sectionName: section.nombre,
-                sectionCode: section.code,
-                teacherName: teacher.nombre,
-            };
-        });
+        const mappedEnrollments = student.enrollments.map(e => ({
+            ...e,
+            sectionName: e.section.nombre,
+            sectionCode: e.section.code,
+            teacherName: e.section.teacher.nombre,
+            grade: e.grade
+        }));
 
         return {
             ...student,
-            enrollments: detailedEnrollments
+            enrollments: mappedEnrollments
         };
     },
 
-    searchTeacherByName: async (nameQuery) => {
-        await new Promise(resolve => setTimeout(resolve, 300));
-        const lowerQuery = nameQuery.toLowerCase();
-        return teachers.filter(t => t.nombre.toLowerCase().includes(lowerQuery));
+    searchTeacherByName: async (name) => {
+        const res = await fetch(`${API_URL}/teachers?name=${name}`);
+        return res.json();
     },
 
     getTeacherSections: async (teacherId) => {
-        await new Promise(resolve => setTimeout(resolve, 300));
-        return sections.filter(s => s.teacherId === teacherId);
+        const res = await fetch(`${API_URL}/teachers/${teacherId}`);
+        const teacher = await res.json();
+        return teacher.sections;
     },
 
     getSectionStudents: async (sectionId) => {
-        await new Promise(resolve => setTimeout(resolve, 300));
-        const sectionEnrollments = enrollments.filter(e => e.sectionId === sectionId);
+        const res = await fetch(`${API_URL}/sections/${sectionId}/students`);
+        const section = await res.json();
 
-        return sectionEnrollments.map(e => {
-            const student = students.find(s => s.id === e.studentId);
-            return {
-                ...student,
-                grade: e.grade
-            };
+        return section.enrollments.map(e => ({
+            ...e.student,
+            grade: e.grade
+        }));
+    },
+
+    createStudent: async (data) => {
+        const res = await fetch(`${API_URL}/students`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
         });
+        return res.json();
+    },
+
+    createTeacher: async (data) => {
+        const res = await fetch(`${API_URL}/teachers`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        return res.json();
     }
 };
