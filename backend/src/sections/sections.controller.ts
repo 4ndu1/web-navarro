@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { SectionsService } from './sections.service';
 
 @Controller('sections')
@@ -11,7 +11,7 @@ export class SectionsController {
     }
 
     @Get(':id/students')
-    findOne(@Param('id') id: string) {
-        return this.sectionsService.findOneWithStudents(+id);
+    findOne(@Param('id') id: string, @Query('schoolYear') schoolYear: string) {
+        return this.sectionsService.findOneWithStudents(+id, schoolYear);
     }
 }

@@ -8,19 +8,36 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { ChevronDown, ChevronRight, Users, Loader2, GraduationCap } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+// Same function as in agregar_estudiante
+const generateSchoolYears = () => {
+    const years = [];
+    const startYear = 2020;
+    for (let i = 0; i < 15; i++) {
+        const year = startYear + i;
+        years.push(`${year}-${year + 1}`);
+    }
+    return years;
+};
+
+const SCHOOL_YEARS = generateSchoolYears();
 
 export default function PageSections() {
     const [sections, setSections] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [selectedYear, setSelectedYear] = useState("2024-2025");
     const [expandedSection, setExpandedSection] = useState(null);
     const [sectionStudents, setSectionStudents] = useState({});
     const [loadingStudents, setLoadingStudents] = useState(null);
 
     useEffect(() => {
         const fetchSections = async () => {
+            setLoading(true);
             try {
                 const data = await api.getSections();
                 setSections(data);
+                // Reset states when year changes if needed, but here we just fetch section names once
             } catch (error) {
                 console.error("Error fetching sections:", error);
             } finally {
@@ -30,6 +47,12 @@ export default function PageSections() {
         fetchSections();
     }, []);
 
+    // When year changes, reset expanded and students
+    useEffect(() => {
+        setExpandedSection(null);
+        setSectionStudents({});
+    }, [selectedYear]);
+
     const handleToggleSection = async (sectionId) => {
         if (expandedSection === sectionId) {
             setExpandedSection(null);
@@ -38,11 +61,11 @@ export default function PageSections() {
 
         setExpandedSection(sectionId);
 
-        // If students not loaded for this section, fetch them
+        // Fetch students for this section AND selected year
         if (!sectionStudents[sectionId]) {
             setLoadingStudents(sectionId);
             try {
-                const students = await api.getSectionStudents(sectionId);
+                const students = await api.getSectionStudents(sectionId, selectedYear);
                 setSectionStudents(prev => ({
                     ...prev,
                     [sectionId]: students
@@ -60,8 +83,33 @@ export default function PageSections() {
             <Sidebar />
             <div className="flex-1 flex flex-col overflow-hidden">
                 <Header title="Secciones / Grupos Estables" />
+
+                {/* School Year Tabs */}
+                <div className="bg-white border-b overflow-x-auto">
+                    <div className="flex px-6 space-x-6">
+                        {SCHOOL_YEARS.map((year) => (
+                            <button
+                                key={year}
+                                onClick={() => setSelectedYear(year)}
+                                className={cn(
+                                    "py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap",
+                                    selectedYear === year
+                                        ? "border-blue-600 text-blue-600"
+                                        : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                                )}
+                            >
+                                {year}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
                 <main className="flex-1 overflow-y-auto p-6">
                     <div className="max-w-5xl mx-auto space-y-4">
+                        <div className="flex items-center justify-between mb-4">
+                            <h2 className="text-xl font-bold text-gray-800">Año Escolar: {selectedYear}</h2>
+                        </div>
+
                         {loading ? (
                             <div className="flex justify-center items-center py-12">
                                 <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
@@ -96,7 +144,7 @@ export default function PageSections() {
                                             <div className="py-4">
                                                 <div className="flex items-center gap-2 mb-4">
                                                     <Users className="h-5 w-5 text-gray-500" />
-                                                    <h4 className="font-medium">Estudiantes Inscritos</h4>
+                                                    <h4 className="font-medium">Estudiantes Inscritos en {selectedYear}</h4>
                                                 </div>
 
                                                 {loadingStudents === section.id ? (
@@ -138,7 +186,7 @@ export default function PageSections() {
                                                     </Table>
                                                 ) : (
                                                     <p className="text-center text-muted-foreground py-6">
-                                                        No hay estudiantes inscritos en este grupo.
+                                                        No hay estudiantes inscritos en este grupo para el año {selectedYear}.
                                                     </p>
                                                 )}
                                             </div>

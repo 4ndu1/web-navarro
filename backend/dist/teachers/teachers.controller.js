@@ -29,6 +29,9 @@ let TeachersController = class TeachersController {
     create(body) {
         return this.teachersService.create(body);
     }
+    delete(id) {
+        return this.teachersService.delete(+id);
+    }
 };
 exports.TeachersController = TeachersController;
 __decorate([
@@ -52,6 +55,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], TeachersController.prototype, "create", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], TeachersController.prototype, "delete", null);
 exports.TeachersController = TeachersController = __decorate([
     (0, common_1.Controller)('teachers'),
     __metadata("design:paramtypes", [teachers_service_1.TeachersService])

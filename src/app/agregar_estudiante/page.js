@@ -8,11 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Loader2, PlusCircle } from "lucide-react";
 
-// Generate school years from 2012-2013 to 2026-2027
+// Generate 15 school years starting from 2020-2021
 const generateSchoolYears = () => {
     const years = [];
-    for (let i = 2012; i <= 2026; i++) {
-        years.push(`${i}-${i + 1}`);
+    const startYear = 2020;
+    for (let i = 0; i < 15; i++) {
+        const year = startYear + i;
+        years.push(`${year}-${year + 1}`);
     }
     return years;
 };

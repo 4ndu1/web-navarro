@@ -37,6 +37,9 @@ let TeachersService = class TeachersService {
     async create(data) {
         return this.teachersRepository.save(data);
     }
+    async delete(id) {
+        return this.teachersRepository.delete(id);
+    }
 };
 exports.TeachersService = TeachersService;
 exports.TeachersService = TeachersService = __decorate([

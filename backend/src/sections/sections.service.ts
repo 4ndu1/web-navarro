@@ -16,11 +16,13 @@ export class SectionsService {
         });
     }
 
-    async findOneWithStudents(id: number) {
-        const section = await this.sectionsRepository.findOne({
-            where: { id },
-            relations: ['enrollments', 'enrollments.student']
-        });
+    async findOneWithStudents(id: number, schoolYear?: string) {
+        const query = this.sectionsRepository.createQueryBuilder('section')
+            .leftJoinAndSelect('section.enrollments', 'enrollment', schoolYear ? 'enrollment.schoolYear = :schoolYear' : '1=1', { schoolYear })
+            .leftJoinAndSelect('enrollment.student', 'student')
+            .where('section.id = :id', { id });
+
+        const section = await query.getOne();
         return section;
     }
 }

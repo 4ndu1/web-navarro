@@ -6,9 +6,6 @@ import {
     Users,
     GraduationCap,
     BookOpen,
-    Calendar,
-    Settings,
-    LogOut,
     Menu,
     UserPlus
 } from "lucide-react";
@@ -23,7 +20,6 @@ const navItems = [
     { label: "Agregar Estudiante", href: "/agregar_estudiante", icon: UserPlus },
     { label: "Agregar Profesor", href: "/agregar_profesor", icon: UserPlus },
     { label: "Secciones", href: "/sections", icon: BookOpen },
-    { label: "Horarios", href: "/schedules", icon: Calendar },
 ];
 
 export default function Sidebar() {
@@ -67,20 +63,6 @@ export default function Sidebar() {
                         </Link>
                     );
                 })}
-            </div>
-
-            {/* Footer */}
-            <div className="p-4 border-t border-[#27272a]">
-                <Button
-                    variant="ghost"
-                    className={cn(
-                        "w-full justify-start text-gray-400 hover:text-red-400 hover:bg-[#27272a]",
-                        collapsed && "justify-center px-0"
-                    )}
-                >
-                    <LogOut className="h-5 w-5" />
-                    {!collapsed && <span className="ml-3">Cerrar Sesión</span>}
-                </Button>
             </div>
         </div>
     );

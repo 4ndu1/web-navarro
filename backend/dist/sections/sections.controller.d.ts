@@ -3,5 +3,5 @@ export declare class SectionsController {
     private readonly sectionsService;
     constructor(sectionsService: SectionsService);
     findAll(): Promise<import("./section.entity").Section[]>;
-    findOne(id: string): Promise<import("./section.entity").Section | null>;
+    findOne(id: string, schoolYear: string): Promise<import("./section.entity").Section | null>;
 }

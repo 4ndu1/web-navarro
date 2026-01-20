@@ -27,11 +27,12 @@ let SectionsService = class SectionsService {
             relations: ['teacher']
         });
     }
-    async findOneWithStudents(id) {
-        const section = await this.sectionsRepository.findOne({
-            where: { id },
-            relations: ['enrollments', 'enrollments.student']
-        });
+    async findOneWithStudents(id, schoolYear) {
+        const query = this.sectionsRepository.createQueryBuilder('section')
+            .leftJoinAndSelect('section.enrollments', 'enrollment', schoolYear ? 'enrollment.schoolYear = :schoolYear' : '1=1', { schoolYear })
+            .leftJoinAndSelect('enrollment.student', 'student')
+            .where('section.id = :id', { id });
+        const section = await query.getOne();
         return section;
     }
 };

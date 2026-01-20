@@ -23,8 +23,8 @@ let SectionsController = class SectionsController {
     findAll() {
         return this.sectionsService.findAll();
     }
-    findOne(id) {
-        return this.sectionsService.findOneWithStudents(+id);
+    findOne(id, schoolYear) {
+        return this.sectionsService.findOneWithStudents(+id, schoolYear);
     }
 };
 exports.SectionsController = SectionsController;
@@ -37,8 +37,9 @@ __decorate([
 __decorate([
     (0, common_1.Get)(':id/students'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Query)('schoolYear')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", void 0)
 ], SectionsController.prototype, "findOne", null);
 exports.SectionsController = SectionsController = __decorate([

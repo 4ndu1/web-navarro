@@ -4,5 +4,5 @@ export declare class SectionsService {
     private sectionsRepository;
     constructor(sectionsRepository: Repository<Section>);
     findAll(): Promise<Section[]>;
-    findOneWithStudents(id: number): Promise<Section | null>;
+    findOneWithStudents(id: number, schoolYear?: string): Promise<Section | null>;
 }

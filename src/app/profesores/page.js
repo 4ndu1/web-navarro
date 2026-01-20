@@ -5,7 +5,7 @@ import Sidebar from "@/components/dashboard/Sidebar";
 import Header from "@/components/dashboard/Header";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Loader2, ArrowLeft } from "lucide-react";
+import { Search, Loader2, ArrowLeft, Trash2 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +18,8 @@ export default function PageProfesores() {
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
+    const [deleteConfirm, setDeleteConfirm] = useState(null);
+    const [deleting, setDeleting] = useState(false);
 
     const handleSearch = async () => {
         if (!searchTerm) return;
@@ -48,6 +50,25 @@ export default function PageProfesores() {
             grade: e.grade
         })) : [];
         setStudents(enrolledStudents);
+    };
+
+    const handleDeleteClick = (teacher) => {
+        setDeleteConfirm(teacher);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!deleteConfirm) return;
+        setDeleting(true);
+        try {
+            await api.deleteTeacher(deleteConfirm.id);
+            setDeleteConfirm(null);
+            handleSearch(); // Refresh list
+        } catch (err) {
+            console.error('Error deleting teacher:', err);
+            alert('Error al eliminar profesor');
+        } finally {
+            setDeleting(false);
+        }
     };
 
     return (
@@ -100,9 +121,20 @@ export default function PageProfesores() {
                                                         )}
                                                     </TableCell>
                                                     <TableCell className="text-right">
-                                                        <Button variant="ghost" size="sm" onClick={() => handleSelectTeacher(t)} className="text-primary hover:text-primary/80">
-                                                            Ver Grupos / Materias
-                                                        </Button>
+                                                        <div className="flex justify-end gap-2">
+                                                            <Button variant="ghost" size="sm" onClick={() => handleSelectTeacher(t)} className="text-primary hover:text-primary/80">
+                                                                Ver Grupos / Materias
+                                                            </Button>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                title="Eliminar"
+                                                                onClick={() => handleDeleteClick(t)}
+                                                                className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                            >
+                                                                <Trash2 className="h-4 w-4" />
+                                                            </Button>
+                                                        </div>
                                                     </TableCell>
                                                 </TableRow>
                                             ))}
@@ -210,6 +242,35 @@ export default function PageProfesores() {
                     </div>
                 </main>
             </div>
+
+            {/* Delete Confirmation Modal */}
+            {deleteConfirm && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-xl">
+                        <h3 className="text-lg font-bold text-gray-900 mb-2">Eliminar Profesor</h3>
+                        <p className="text-gray-600 mb-6">
+                            ¿Está seguro que desea eliminar el profesor <strong>{deleteConfirm.nombre}</strong> de la base de datos?
+                        </p>
+                        <div className="flex gap-3 justify-end">
+                            <Button
+                                variant="outline"
+                                onClick={() => setDeleteConfirm(null)}
+                                disabled={deleting}
+                            >
+                                Cancelar
+                            </Button>
+                            <Button
+                                onClick={handleConfirmDelete}
+                                disabled={deleting}
+                                className="bg-red-600 hover:bg-red-700 text-white"
+                            >
+                                {deleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Trash2 className="mr-2 h-4 w-4" />}
+                                Eliminar
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

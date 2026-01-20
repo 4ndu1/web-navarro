@@ -6,4 +6,5 @@ export declare class TeachersService {
     findAll(name: string): Promise<Teacher[]>;
     findOneWithSections(id: number): Promise<Teacher | null>;
     create(data: Partial<Teacher>): Promise<Partial<Teacher> & Teacher>;
+    delete(id: number): Promise<import("typeorm").DeleteResult>;
 }

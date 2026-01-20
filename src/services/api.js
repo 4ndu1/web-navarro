@@ -55,9 +55,19 @@ export const api = {
         return teacher.sections;
     },
 
-    getSectionStudents: async (sectionId) => {
-        const res = await fetch(`${API_URL}/sections/${sectionId}/students`);
+    getSectionStudents: async (sectionId, schoolYear) => {
+        let url = `${API_URL}/sections/${sectionId}/students`;
+        if (schoolYear) {
+            url += `?schoolYear=${schoolYear}`;
+        }
+        const res = await fetch(url);
+        if (!res.ok) {
+            console.error(`Error fetching section students: ${res.status}`);
+            return [];
+        }
+
         const section = await res.json();
+        if (!section || !section.enrollments) return [];
 
         return section.enrollments.map(e => ({
             ...e.student,
@@ -102,6 +112,13 @@ export const api = {
 
     deleteStudent: async (studentId) => {
         const res = await fetch(`${API_URL}/students/${studentId}`, {
+            method: 'DELETE'
+        });
+        return res.json();
+    },
+
+    deleteTeacher: async (teacherId) => {
+        const res = await fetch(`${API_URL}/teachers/${teacherId}`, {
             method: 'DELETE'
         });
         return res.json();

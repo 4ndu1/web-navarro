@@ -27,4 +27,8 @@ export class TeachersService {
     async create(data: Partial<Teacher>) {
         return this.teachersRepository.save(data);
     }
+
+    async delete(id: number) {
+        return this.teachersRepository.delete(id);
+    }
 }
