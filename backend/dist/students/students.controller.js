@@ -23,11 +23,14 @@ let StudentsController = class StudentsController {
     findAll() {
         return this.studentsService.findAll();
     }
-    findByCedula(cedula) {
-        return this.studentsService.findByCedula(cedula);
+    search(q) {
+        return this.studentsService.search(q);
     }
     create(body) {
         return this.studentsService.create(body);
+    }
+    delete(id) {
+        return this.studentsService.delete(+id);
     }
 };
 exports.StudentsController = StudentsController;
@@ -39,11 +42,11 @@ __decorate([
 ], StudentsController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)('search'),
-    __param(0, (0, common_1.Query)('cedula')),
+    __param(0, (0, common_1.Query)('q')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
-], StudentsController.prototype, "findByCedula", null);
+], StudentsController.prototype, "search", null);
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
@@ -51,6 +54,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], StudentsController.prototype, "create", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], StudentsController.prototype, "delete", null);
 exports.StudentsController = StudentsController = __decorate([
     (0, common_1.Controller)('students'),
     __metadata("design:paramtypes", [students_service_1.StudentsService])

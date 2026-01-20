@@ -22,6 +22,11 @@ let SectionsService = class SectionsService {
     constructor(sectionsRepository) {
         this.sectionsRepository = sectionsRepository;
     }
+    async findAll() {
+        return this.sectionsRepository.find({
+            relations: ['teacher']
+        });
+    }
     async findOneWithStudents(id) {
         const section = await this.sectionsRepository.findOne({
             where: { id },

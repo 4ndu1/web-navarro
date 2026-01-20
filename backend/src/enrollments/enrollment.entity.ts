@@ -13,6 +13,18 @@ export class Enrollment {
     @ManyToOne(() => Section, (section) => section.enrollments)
     section: Section;
 
-    @Column()
-    grade: number;
+    @Column({ type: 'varchar', length: 20 })
+    schoolYear: string;
+
+    @Column({ type: 'varchar', length: 2, nullable: true })
+    grade1: string;
+
+    @Column({ type: 'varchar', length: 2, nullable: true })
+    grade2: string;
+
+    @Column({ type: 'varchar', length: 2, nullable: true })
+    grade3: string;
+
+    @Column({ type: 'varchar', length: 2, nullable: true })
+    gradeFinal: string;
 }

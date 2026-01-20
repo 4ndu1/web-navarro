@@ -5,6 +5,11 @@ import { SectionsService } from './sections.service';
 export class SectionsController {
     constructor(private readonly sectionsService: SectionsService) { }
 
+    @Get()
+    findAll() {
+        return this.sectionsService.findAll();
+    }
+
     @Get(':id/students')
     findOne(@Param('id') id: string) {
         return this.sectionsService.findOneWithStudents(+id);

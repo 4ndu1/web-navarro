@@ -20,8 +20,9 @@ const navItems = [
     { label: "Dashboard", href: "/", icon: LayoutDashboard },
     { label: "Estudiantes", href: "/estudiantes", icon: Users },
     { label: "Profesores", href: "/profesores", icon: GraduationCap },
-    { label: "Agregar Estudiante", href: "/agregar_estudiante", icon: UserPlus }, // Added for convenience? Or just stick to main lists
-    { label: "Secciones", href: "/sections", icon: BookOpen }, // Assuming this will be created or exists? It wasn't in list_dir.
+    { label: "Agregar Estudiante", href: "/agregar_estudiante", icon: UserPlus },
+    { label: "Agregar Profesor", href: "/agregar_profesor", icon: UserPlus },
+    { label: "Secciones", href: "/sections", icon: BookOpen },
     { label: "Horarios", href: "/schedules", icon: Calendar },
 ];
 

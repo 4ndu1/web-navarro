@@ -12,36 +12,36 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TeachersService = void 0;
+exports.EnrollmentsService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
-const teacher_entity_1 = require("./teacher.entity");
-let TeachersService = class TeachersService {
-    teachersRepository;
-    constructor(teachersRepository) {
-        this.teachersRepository = teachersRepository;
+const enrollment_entity_1 = require("./enrollment.entity");
+let EnrollmentsService = class EnrollmentsService {
+    enrollmentRepository;
+    constructor(enrollmentRepository) {
+        this.enrollmentRepository = enrollmentRepository;
     }
-    findAll(name) {
-        return this.teachersRepository.find({
-            where: { nombre: (0, typeorm_2.Like)(`%${name}%`) },
-            relations: ['sections', 'sections.enrollments', 'sections.enrollments.student']
-        });
-    }
-    async findOneWithSections(id) {
-        return this.teachersRepository.findOne({
-            where: { id },
-            relations: ['sections']
-        });
-    }
-    async create(data) {
-        return this.teachersRepository.save(data);
+    async updateGrades(id, grades) {
+        const enrollment = await this.enrollmentRepository.findOne({ where: { id } });
+        if (!enrollment) {
+            throw new Error('Enrollment not found');
+        }
+        if (grades.grade1 !== undefined)
+            enrollment.grade1 = grades.grade1;
+        if (grades.grade2 !== undefined)
+            enrollment.grade2 = grades.grade2;
+        if (grades.grade3 !== undefined)
+            enrollment.grade3 = grades.grade3;
+        if (grades.gradeFinal !== undefined)
+            enrollment.gradeFinal = grades.gradeFinal;
+        return this.enrollmentRepository.save(enrollment);
     }
 };
-exports.TeachersService = TeachersService;
-exports.TeachersService = TeachersService = __decorate([
+exports.EnrollmentsService = EnrollmentsService;
+exports.EnrollmentsService = EnrollmentsService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, typeorm_1.InjectRepository)(teacher_entity_1.Teacher)),
+    __param(0, (0, typeorm_1.InjectRepository)(enrollment_entity_1.Enrollment)),
     __metadata("design:paramtypes", [typeorm_2.Repository])
-], TeachersService);
-//# sourceMappingURL=teachers.service.js.map
+], EnrollmentsService);
+//# sourceMappingURL=enrollments.service.js.map

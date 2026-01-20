@@ -4,5 +4,9 @@ export declare class Enrollment {
     id: number;
     student: Student;
     section: Section;
-    grade: number;
+    schoolYear: string;
+    grade1: string;
+    grade2: string;
+    grade3: string;
+    gradeFinal: string;
 }

@@ -2,8 +2,6 @@ const API_URL = 'http://localhost:3001';
 
 export const api = {
     getStats: async () => {
-        // We haven't implemented getStats on backend yet, we can mock it or fetch students + teachers
-        // For now, let's just fetch all students to get count
         const studentsRes = await fetch(`${API_URL}/students`);
         const students = await studentsRes.json();
         const teachersRes = await fetch(`${API_URL}/teachers`);
@@ -21,28 +19,29 @@ export const api = {
         return res.json();
     },
 
-    searchStudentByCedula: async (cedula) => {
-        const res = await fetch(`${API_URL}/students/search?cedula=${cedula}`);
-        const student = await res.json();
-        if (!student) return null;
+    searchStudents: async (query) => {
+        const res = await fetch(`${API_URL}/students/search?q=${query}`);
+        const students = await res.json();
+        if (!students || students.length === 0) return [];
 
-        // Backend returns student with enrollments -> section -> teacher
-        // We need to map to format expected by UI if different
-        // UI expects: enrollments: [{ ..., sectionName, teacherName }]
-        // Backend returns: enrollments: [{ section: { nombre, teacher: { nombre } } }]
+        return students.map(student => {
+            const mappedEnrollments = student.enrollments ? student.enrollments.map(e => ({
+                id: e.id,
+                sectionName: e.section ? e.section.nombre : 'Sin nombre',
+                sectionCode: e.section ? e.section.code : '',
+                teacherName: e.section && e.section.teacher ? e.section.teacher.nombre : 'Sin profesor',
+                schoolYear: e.schoolYear || '',
+                grade1: e.grade1 || '',
+                grade2: e.grade2 || '',
+                grade3: e.grade3 || '',
+                gradeFinal: e.gradeFinal || ''
+            })) : [];
 
-        const mappedEnrollments = student.enrollments.map(e => ({
-            ...e,
-            sectionName: e.section.nombre,
-            sectionCode: e.section.code,
-            teacherName: e.section.teacher.nombre,
-            grade: e.grade
-        }));
-
-        return {
-            ...student,
-            enrollments: mappedEnrollments
-        };
+            return {
+                ...student,
+                enrollments: mappedEnrollments
+            };
+        });
     },
 
     searchTeacherByName: async (name) => {
@@ -62,7 +61,10 @@ export const api = {
 
         return section.enrollments.map(e => ({
             ...e.student,
-            grade: e.grade
+            grade1: e.grade1,
+            grade2: e.grade2,
+            grade3: e.grade3,
+            gradeFinal: e.gradeFinal
         }));
     },
 
@@ -75,11 +77,32 @@ export const api = {
         return res.json();
     },
 
+    getSections: async () => {
+        const res = await fetch(`${API_URL}/sections`);
+        return res.json();
+    },
+
     createTeacher: async (data) => {
         const res = await fetch(`${API_URL}/teachers`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
+        });
+        return res.json();
+    },
+
+    updateEnrollmentGrades: async (enrollmentId, grades) => {
+        const res = await fetch(`${API_URL}/enrollments/${enrollmentId}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(grades)
+        });
+        return res.json();
+    },
+
+    deleteStudent: async (studentId) => {
+        const res = await fetch(`${API_URL}/students/${studentId}`, {
+            method: 'DELETE'
         });
         return res.json();
     }

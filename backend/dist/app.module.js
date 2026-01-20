@@ -17,6 +17,8 @@ const section_entity_1 = require("./sections/section.entity");
 const enrollment_entity_1 = require("./enrollments/enrollment.entity");
 const students_module_1 = require("./students/students.module");
 const teachers_module_1 = require("./teachers/teachers.module");
+const sections_module_1 = require("./sections/sections.module");
+const enrollments_module_1 = require("./enrollments/enrollments.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -36,6 +38,8 @@ exports.AppModule = AppModule = __decorate([
             typeorm_1.TypeOrmModule.forFeature([student_entity_1.Student, teacher_entity_1.Teacher, section_entity_1.Section, enrollment_entity_1.Enrollment]),
             students_module_1.StudentsModule,
             teachers_module_1.TeachersModule,
+            sections_module_1.SectionsModule,
+            enrollments_module_1.EnrollmentsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

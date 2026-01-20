@@ -10,6 +10,12 @@ export class SectionsService {
         private sectionsRepository: Repository<Section>,
     ) { }
 
+    async findAll() {
+        return this.sectionsRepository.find({
+            relations: ['teacher']
+        });
+    }
+
     async findOneWithStudents(id: number) {
         const section = await this.sectionsRepository.findOne({
             where: { id },

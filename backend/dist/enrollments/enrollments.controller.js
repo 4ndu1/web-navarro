@@ -12,37 +12,29 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SectionsController = void 0;
+exports.EnrollmentsController = void 0;
 const common_1 = require("@nestjs/common");
-const sections_service_1 = require("./sections.service");
-let SectionsController = class SectionsController {
-    sectionsService;
-    constructor(sectionsService) {
-        this.sectionsService = sectionsService;
+const enrollments_service_1 = require("./enrollments.service");
+let EnrollmentsController = class EnrollmentsController {
+    enrollmentsService;
+    constructor(enrollmentsService) {
+        this.enrollmentsService = enrollmentsService;
     }
-    findAll() {
-        return this.sectionsService.findAll();
-    }
-    findOne(id) {
-        return this.sectionsService.findOneWithStudents(+id);
+    updateGrades(id, grades) {
+        return this.enrollmentsService.updateGrades(+id, grades);
     }
 };
-exports.SectionsController = SectionsController;
+exports.EnrollmentsController = EnrollmentsController;
 __decorate([
-    (0, common_1.Get)(),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], SectionsController.prototype, "findAll", null);
-__decorate([
-    (0, common_1.Get)(':id/students'),
+    (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
-], SectionsController.prototype, "findOne", null);
-exports.SectionsController = SectionsController = __decorate([
-    (0, common_1.Controller)('sections'),
-    __metadata("design:paramtypes", [sections_service_1.SectionsService])
-], SectionsController);
-//# sourceMappingURL=sections.controller.js.map
+], EnrollmentsController.prototype, "updateGrades", null);
+exports.EnrollmentsController = EnrollmentsController = __decorate([
+    (0, common_1.Controller)('enrollments'),
+    __metadata("design:paramtypes", [enrollments_service_1.EnrollmentsService])
+], EnrollmentsController);
+//# sourceMappingURL=enrollments.controller.js.map

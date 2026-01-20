@@ -13,7 +13,7 @@ export class TeachersService {
     findAll(name: string) {
         return this.teachersRepository.find({
             where: { nombre: Like(`%${name}%`) },
-            relations: ['sections']
+            relations: ['sections', 'sections.enrollments', 'sections.enrollments.student']
         });
     }
 

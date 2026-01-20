@@ -17,7 +17,11 @@ let Enrollment = class Enrollment {
     id;
     student;
     section;
-    grade;
+    schoolYear;
+    grade1;
+    grade2;
+    grade3;
+    gradeFinal;
 };
 exports.Enrollment = Enrollment;
 __decorate([
@@ -33,9 +37,25 @@ __decorate([
     __metadata("design:type", section_entity_1.Section)
 ], Enrollment.prototype, "section", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", Number)
-], Enrollment.prototype, "grade", void 0);
+    (0, typeorm_1.Column)({ type: 'varchar', length: 20 }),
+    __metadata("design:type", String)
+], Enrollment.prototype, "schoolYear", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 2, nullable: true }),
+    __metadata("design:type", String)
+], Enrollment.prototype, "grade1", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 2, nullable: true }),
+    __metadata("design:type", String)
+], Enrollment.prototype, "grade2", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 2, nullable: true }),
+    __metadata("design:type", String)
+], Enrollment.prototype, "grade3", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 2, nullable: true }),
+    __metadata("design:type", String)
+], Enrollment.prototype, "gradeFinal", void 0);
 exports.Enrollment = Enrollment = __decorate([
     (0, typeorm_1.Entity)()
 ], Enrollment);

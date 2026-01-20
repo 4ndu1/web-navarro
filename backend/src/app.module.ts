@@ -9,6 +9,7 @@ import { Enrollment } from './enrollments/enrollment.entity';
 import { StudentsModule } from './students/students.module';
 import { TeachersModule } from './teachers/teachers.module';
 import { SectionsModule } from './sections/sections.module';
+import { EnrollmentsModule } from './enrollments/enrollments.module';
 
 @Module({
   imports: [
@@ -20,11 +21,13 @@ import { SectionsModule } from './sections/sections.module';
       password: '',
       database: 'web_navarro',
       entities: [Student, Teacher, Section, Enrollment],
-      synchronize: true, // Auto-create tables for dev
+      synchronize: true,
     }),
     TypeOrmModule.forFeature([Student, Teacher, Section, Enrollment]),
     StudentsModule,
     TeachersModule,
+    SectionsModule,
+    EnrollmentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

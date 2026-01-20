@@ -6,21 +6,21 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.StudentsModule = void 0;
+exports.EnrollmentsModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
-const student_entity_1 = require("./student.entity");
-const enrollment_entity_1 = require("../enrollments/enrollment.entity");
-const students_service_1 = require("./students.service");
-const students_controller_1 = require("./students.controller");
-let StudentsModule = class StudentsModule {
+const enrollment_entity_1 = require("./enrollment.entity");
+const enrollments_service_1 = require("./enrollments.service");
+const enrollments_controller_1 = require("./enrollments.controller");
+let EnrollmentsModule = class EnrollmentsModule {
 };
-exports.StudentsModule = StudentsModule;
-exports.StudentsModule = StudentsModule = __decorate([
+exports.EnrollmentsModule = EnrollmentsModule;
+exports.EnrollmentsModule = EnrollmentsModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([student_entity_1.Student, enrollment_entity_1.Enrollment])],
-        controllers: [students_controller_1.StudentsController],
-        providers: [students_service_1.StudentsService],
+        imports: [typeorm_1.TypeOrmModule.forFeature([enrollment_entity_1.Enrollment])],
+        controllers: [enrollments_controller_1.EnrollmentsController],
+        providers: [enrollments_service_1.EnrollmentsService],
+        exports: [enrollments_service_1.EnrollmentsService],
     })
-], StudentsModule);
-//# sourceMappingURL=students.module.js.map
+], EnrollmentsModule);
+//# sourceMappingURL=enrollments.module.js.map

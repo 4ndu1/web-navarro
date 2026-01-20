@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, Post, Body } from '@nestjs/common';
+import { Controller, Get, Param, Query, Post, Delete, Body } from '@nestjs/common';
 import { StudentsService } from './students.service';
 
 @Controller('students')
@@ -11,12 +11,17 @@ export class StudentsController {
     }
 
     @Get('search')
-    findByCedula(@Query('cedula') cedula: string) {
-        return this.studentsService.findByCedula(cedula);
+    search(@Query('q') q: string) {
+        return this.studentsService.search(q);
     }
 
     @Post()
     create(@Body() body: any) {
         return this.studentsService.create(body);
+    }
+
+    @Delete(':id')
+    delete(@Param('id') id: string) {
+        return this.studentsService.delete(+id);
     }
 }

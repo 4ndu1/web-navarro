@@ -129,6 +129,13 @@ export default function Home() {
             title="Base de Datos de Estudiantes"
             columns={studentColumns}
             data={students}
+            onDataChange={() => {
+              api.getAllStudents().then(allStudents => {
+                const sortedStudents = [...allStudents].sort((a, b) => b.id - a.id);
+                setStudents(sortedStudents);
+                setStats(prev => ({ ...prev, totalStudents: allStudents.length }));
+              });
+            }}
           />
         </main>
       </div>

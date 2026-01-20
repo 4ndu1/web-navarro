@@ -5,7 +5,7 @@ import Sidebar from "@/components/dashboard/Sidebar";
 import Header from "@/components/dashboard/Header";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Loader2, BookOpen, User, ArrowLeft } from "lucide-react";
+import { Search, Loader2, ArrowLeft } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -33,17 +33,21 @@ export default function PageProfesores() {
         }
     };
 
-    const handleSelectTeacher = async (teacher) => {
+    const handleSelectTeacher = (teacher) => {
         setSelectedTeacher(teacher);
         setSelectedSection(null);
-        const result = await api.getTeacherSections(teacher.id);
-        setSections(result);
+        // data included in search result (teacher.sections)
+        setSections(teacher.sections || []);
     };
 
-    const handleSelectSection = async (section) => {
+    const handleSelectSection = (section) => {
         setSelectedSection(section);
-        const result = await api.getSectionStudents(section.id);
-        setStudents(result);
+        // data included in search result (section.enrollments -> map to students)
+        const enrolledStudents = section.enrollments ? section.enrollments.map(e => ({
+            ...e.student,
+            grade: e.grade
+        })) : [];
+        setStudents(enrolledStudents);
     };
 
     return (
@@ -57,7 +61,7 @@ export default function PageProfesores() {
                         {/* Search Bar */}
                         <div className="flex gap-4 items-center">
                             <Input
-                                placeholder="Nombre del profesor"
+                                placeholder="Nombre del profesor (ej: Norbelis)"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="max-w-md"
@@ -79,7 +83,7 @@ export default function PageProfesores() {
                                         <TableHeader>
                                             <TableRow>
                                                 <TableHead>Nombre</TableHead>
-                                                <TableHead>Especialidad</TableHead>
+                                                <TableHead>Especialidad / Grupos</TableHead>
                                                 <TableHead className="text-right">Acción</TableHead>
                                             </TableRow>
                                         </TableHeader>
@@ -87,10 +91,17 @@ export default function PageProfesores() {
                                             {teachers.map((t) => (
                                                 <TableRow key={t.id}>
                                                     <TableCell className="font-medium">{t.nombre}</TableCell>
-                                                    <TableCell><Badge variant="outline">{t.especialidad}</Badge></TableCell>
+                                                    <TableCell>
+                                                        <Badge variant="outline">{t.especialidad}</Badge>
+                                                        {t.sections && t.sections.length > 0 && (
+                                                            <span className="ml-2 text-xs text-muted-foreground">
+                                                                ({t.sections.length} grupos)
+                                                            </span>
+                                                        )}
+                                                    </TableCell>
                                                     <TableCell className="text-right">
                                                         <Button variant="ghost" size="sm" onClick={() => handleSelectTeacher(t)} className="text-primary hover:text-primary/80">
-                                                            Ver Secciones
+                                                            Ver Grupos / Materias
                                                         </Button>
                                                     </TableCell>
                                                 </TableRow>
@@ -120,25 +131,25 @@ export default function PageProfesores() {
                                         </div>
                                     </CardHeader>
                                     <CardContent>
-                                        <h3 className="text-lg font-medium mb-4">Secciones Asignadas</h3>
+                                        <h3 className="text-lg font-medium mb-4">Grupos / Materias Asignadas</h3>
                                         <Table>
                                             <TableHeader>
                                                 <TableRow>
-                                                    <TableHead>Materia</TableHead>
-                                                    <TableHead>Año</TableHead>
+                                                    <TableHead>Nombre</TableHead>
+                                                    <TableHead>Año Académico</TableHead>
                                                     <TableHead>Código</TableHead>
-                                                    <TableHead className="text-right">Acción</TableHead>
+                                                    <TableHead className="text-right">Estudiantes</TableHead>
                                                 </TableRow>
                                             </TableHeader>
                                             <TableBody>
                                                 {sections.map((s) => (
                                                     <TableRow key={s.id}>
-                                                        <TableCell>{s.nombre}</TableCell>
+                                                        <TableCell className="font-medium">{s.nombre}</TableCell>
                                                         <TableCell>{s.year}</TableCell>
                                                         <TableCell>{s.code}</TableCell>
                                                         <TableCell className="text-right">
                                                             <Button variant="ghost" size="sm" onClick={() => handleSelectSection(s)} className="text-primary hover:text-primary/80">
-                                                                Ver Estudiantes
+                                                                Ver Lista ({s.enrollments?.length || 0})
                                                             </Button>
                                                         </TableCell>
                                                     </TableRow>
@@ -154,11 +165,12 @@ export default function PageProfesores() {
                         {selectedSection && (
                             <div className="space-y-4 animate-in slide-in-from-right-4 duration-500">
                                 <Button variant="ghost" onClick={() => setSelectedSection(null)} className="pl-0 gap-2">
-                                    <ArrowLeft className="h-4 w-4" /> Volver a secciones
+                                    <ArrowLeft className="h-4 w-4" /> Volver a grupos de {selectedTeacher.nombre}
                                 </Button>
                                 <Card>
                                     <CardHeader>
-                                        <CardTitle>Estudiantes en {selectedSection.nombre} ({selectedSection.year})</CardTitle>
+                                        <CardTitle>{selectedSection.nombre}</CardTitle>
+                                        <p className="text-muted-foreground">Listado de Estudiantes - {selectedSection.year}</p>
                                     </CardHeader>
                                     <CardContent>
                                         <Table>
@@ -166,17 +178,29 @@ export default function PageProfesores() {
                                                 <TableRow>
                                                     <TableHead>Nombre</TableHead>
                                                     <TableHead>Cédula</TableHead>
-                                                    <TableHead>Nota Actual</TableHead>
+                                                    <TableHead>Nota</TableHead>
                                                 </TableRow>
                                             </TableHeader>
                                             <TableBody>
-                                                {students.map((s, idx) => (
-                                                    <TableRow key={idx}>
-                                                        <TableCell className="font-medium">{s.nombre}</TableCell>
-                                                        <TableCell>{s.cedula}</TableCell>
-                                                        <TableCell><Badge variant="secondary">{s.grade} pts</Badge></TableCell>
+                                                {students.length > 0 ? (
+                                                    students.map((s, idx) => (
+                                                        <TableRow key={idx}>
+                                                            <TableCell className="font-medium">{s.nombre}</TableCell>
+                                                            <TableCell>{s.cedula}</TableCell>
+                                                            <TableCell>
+                                                                <Badge variant="secondary" className="font-mono text-base">
+                                                                    {s.grade}
+                                                                </Badge>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    ))
+                                                ) : (
+                                                    <TableRow>
+                                                        <TableCell colSpan={3} className="text-center py-6 text-muted-foreground">
+                                                            No hay estudiantes inscritos en este grupo.
+                                                        </TableCell>
                                                     </TableRow>
-                                                ))}
+                                                )}
                                             </TableBody>
                                         </Table>
                                     </CardContent>
