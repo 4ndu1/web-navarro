@@ -51,12 +51,12 @@ let AppService = class AppService {
             const sec2 = await this.sectionRepo.save({ nombre: "Física I", year: "2do Año", teacher: t2, code: "FIS201" });
             const sec3 = await this.sectionRepo.save({ nombre: "Programación Web", year: "3er Año", teacher: t3, code: "WEB301" });
             const sec4 = await this.sectionRepo.save({ nombre: "Matemáticas II", year: "2do Año", teacher: t1, code: "MAT201" });
-            await this.enrollmentRepo.save({ student: s1, section: sec1, grade: "18" });
-            await this.enrollmentRepo.save({ student: s1, section: sec3, grade: "20" });
-            await this.enrollmentRepo.save({ student: s2, section: sec1, grade: "15" });
-            await this.enrollmentRepo.save({ student: s2, section: sec2, grade: "17" });
-            await this.enrollmentRepo.save({ student: s3, section: sec3, grade: "19" });
-            await this.enrollmentRepo.save({ student: s4, section: sec4, grade: "12" });
+            await this.enrollmentRepo.save({ student: s1, section: sec1, schoolYear: "2023-2024", grade1: "18", grade2: "15", grade3: "19", gradeFinal: "17" });
+            await this.enrollmentRepo.save({ student: s1, section: sec3, schoolYear: "2023-2024", grade1: "20", grade2: "20", grade3: "20", gradeFinal: "20" });
+            await this.enrollmentRepo.save({ student: s2, section: sec1, schoolYear: "2023-2024", grade1: "15", grade2: "14", grade3: "16", gradeFinal: "15" });
+            await this.enrollmentRepo.save({ student: s2, section: sec2, schoolYear: "2023-2024", grade1: "17", grade2: "18", grade3: "16", gradeFinal: "17" });
+            await this.enrollmentRepo.save({ student: s3, section: sec3, schoolYear: "2023-2024", grade1: "19", grade2: "18", grade3: "20", gradeFinal: "19" });
+            await this.enrollmentRepo.save({ student: s4, section: sec4, schoolYear: "2023-2024", grade1: "12", grade2: "13", grade3: "11", gradeFinal: "12" });
             return "Database seeded successfully!";
         }
         catch (error) {
