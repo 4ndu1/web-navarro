@@ -4,8 +4,10 @@ import { Teacher } from './teacher.entity';
 import { TeachersService } from './teachers.service';
 import { TeachersController } from './teachers.controller';
 
+import { Section } from '../sections/section.entity';
+
 @Module({
-    imports: [TypeOrmModule.forFeature([Teacher])],
+    imports: [TypeOrmModule.forFeature([Teacher, Section])],
     controllers: [TeachersController],
     providers: [TeachersService],
 })

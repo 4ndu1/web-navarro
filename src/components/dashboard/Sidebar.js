@@ -28,7 +28,7 @@ export default function Sidebar() {
 
     return (
         <div className={cn(
-            "flex flex-col h-screen bg-[#09090b] text-white border-r border-[#27272a] transition-all duration-300",
+            "flex flex-col h-screen bg-[#000435] text-white border-r border-[#000435] transition-all duration-300",
             collapsed ? "w-16" : "w-64"
         )}>
             {/* Header */}
@@ -53,8 +53,8 @@ export default function Sidebar() {
                             key={item.href}
                             href={item.href}
                             className={cn(
-                                "flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors hover:bg-[#27272a]",
-                                isActive ? "bg-[#27272a] border-l-4 border-blue-500" : "text-gray-400 hover:text-white",
+                                "flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors hover:bg-white/10",
+                                isActive ? "bg-white/20 border-l-4 border-white" : "text-gray-300 hover:text-white",
                                 collapsed && "justify-center px-2"
                             )}
                         >

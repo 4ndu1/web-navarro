@@ -14,4 +14,9 @@ export class AppController {
   seed() {
     return this.appService.seed();
   }
+
+  @Get('stats')
+  getStats() {
+    return this.appService.getStats();
+  }
 }

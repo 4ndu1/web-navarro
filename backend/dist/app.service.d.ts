@@ -10,5 +10,11 @@ export declare class AppService {
     private enrollmentRepo;
     constructor(studentRepo: Repository<Student>, teacherRepo: Repository<Teacher>, sectionRepo: Repository<Section>, enrollmentRepo: Repository<Enrollment>);
     getHello(): string;
+    getStats(): Promise<{
+        totalStudents: number;
+        totalTeachers: number;
+        totalSections: number;
+        totalSubjects: number;
+    }>;
     seed(): Promise<string>;
 }

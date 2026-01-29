@@ -34,6 +34,21 @@ let AppService = class AppService {
     getHello() {
         return 'Hello World!';
     }
+    async getStats() {
+        const totalStudents = await this.studentRepo.count();
+        const totalTeachers = await this.teacherRepo.count();
+        const totalSections = await this.sectionRepo.count();
+        const uniqueSubjects = await this.sectionRepo
+            .createQueryBuilder('section')
+            .select('COUNT(DISTINCT(section.nombre))', 'count')
+            .getRawOne();
+        return {
+            totalStudents,
+            totalTeachers,
+            totalSections,
+            totalSubjects: parseInt(uniqueSubjects.count, 10) || 0,
+        };
+    }
     async seed() {
         try {
             await this.enrollmentRepo.createQueryBuilder().delete().execute();

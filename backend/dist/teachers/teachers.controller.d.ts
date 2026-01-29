@@ -4,6 +4,9 @@ export declare class TeachersController {
     constructor(teachersService: TeachersService);
     findAll(name: string): Promise<import("./teacher.entity").Teacher[]>;
     findOne(id: string): Promise<import("./teacher.entity").Teacher | null>;
-    create(body: any): Promise<Partial<import("./teacher.entity").Teacher> & import("./teacher.entity").Teacher>;
+    create(body: any): Promise<{
+        nombre: any;
+        especialidad: any;
+    } & import("./teacher.entity").Teacher>;
     delete(id: string): Promise<import("typeorm").DeleteResult>;
 }

@@ -11,7 +11,9 @@ import { Loader2, PlusCircle, GraduationCap } from "lucide-react";
 export default function PageAgregarProfesor() {
     const [formData, setFormData] = useState({
         nombre: "",
-        especialidad: ""
+        especialidad: "",
+        materia: "",
+        codigo: ""
     });
     const [status, setStatus] = useState(null);
 
@@ -25,7 +27,7 @@ export default function PageAgregarProfesor() {
         try {
             await api.createTeacher(formData);
             setStatus("success");
-            setFormData({ nombre: "", especialidad: "" });
+            setFormData({ nombre: "", especialidad: "", materia: "", codigo: "" });
         } catch (error) {
             console.error(error);
             setStatus("error");
@@ -67,8 +69,33 @@ export default function PageAgregarProfesor() {
                                         value={formData.especialidad}
                                         onChange={handleChange}
                                         required
-                                        placeholder="Ej. Matemáticas"
+                                        placeholder="Instructor GE"
                                     />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium leading-none">
+                                            Materia / Sección
+                                        </label>
+                                        <Input
+                                            name="materia"
+                                            value={formData.materia || ''}
+                                            onChange={handleChange}
+                                            placeholder="Ej. Matematicas 1er Año"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium leading-none">
+                                            Código
+                                        </label>
+                                        <Input
+                                            name="codigo"
+                                            value={formData.codigo || ''}
+                                            onChange={handleChange}
+                                            placeholder="Ej. MAT-101"
+                                        />
+                                    </div>
                                 </div>
 
                                 <div className="pt-2">
@@ -102,6 +129,6 @@ export default function PageAgregarProfesor() {
                     </Card>
                 </main>
             </div>
-        </div>
+        </div >
     );
 }

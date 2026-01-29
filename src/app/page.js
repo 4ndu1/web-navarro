@@ -16,7 +16,7 @@ const studentColumns = [
 ];
 
 export default function Home() {
-  const [stats, setStats] = useState({ totalStudents: 0, totalTeachers: 0, lastStudent: null });
+  const [stats, setStats] = useState({ totalStudents: 0, totalTeachers: 0, totalSections: 0, totalSubjects: 0 });
   const [students, setStudents] = useState([]);
   const [recentActivities, setRecentActivities] = useState([]);
   const [chartData, setChartData] = useState([]);
@@ -91,26 +91,22 @@ export default function Home() {
               value={stats.totalStudents}
               icon={Users}
               trend="up"
-              description="+12% mes anterior"
             />
             <StatCard
               title="Profesores Activos"
               value={stats.totalTeachers}
               icon={GraduationCap}
               trend="up"
-              description="+2 nuevos"
             />
             <StatCard
               title="Secciones"
-              value="12"
+              value={stats.totalSections}
               icon={School}
-              description="4 activas hoy"
             />
             <StatCard
               title="Materias"
-              value="8"
+              value={stats.totalSubjects}
               icon={BookOpen}
-              description="Plan 2024"
             />
           </div>
 

@@ -2,16 +2,8 @@ const API_URL = 'http://localhost:3001';
 
 export const api = {
     getStats: async () => {
-        const studentsRes = await fetch(`${API_URL}/students`);
-        const students = await studentsRes.json();
-        const teachersRes = await fetch(`${API_URL}/teachers`);
-        const teachers = await teachersRes.json();
-
-        return {
-            totalStudents: students.length,
-            totalTeachers: teachers.length,
-            lastStudent: students[students.length - 1] || null,
-        };
+        const res = await fetch(`${API_URL}/stats`);
+        return res.json();
     },
 
     getAllStudents: async () => {

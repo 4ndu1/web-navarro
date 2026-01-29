@@ -4,4 +4,10 @@ export declare class AppController {
     constructor(appService: AppService);
     getHello(): string;
     seed(): Promise<string>;
+    getStats(): Promise<{
+        totalStudents: number;
+        totalTeachers: number;
+        totalSections: number;
+        totalSubjects: number;
+    }>;
 }
