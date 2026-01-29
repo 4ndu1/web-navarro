@@ -16,7 +16,7 @@ export class Section {
     @Column()
     code: string;
 
-    @ManyToOne(() => Teacher, (teacher) => teacher.sections)
+    @ManyToOne(() => Teacher, (teacher) => teacher.sections, { onDelete: 'CASCADE' })
     teacher: Teacher;
 
     @OneToMany(() => Enrollment, (enrollment) => enrollment.section)

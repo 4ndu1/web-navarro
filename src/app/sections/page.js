@@ -9,6 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { ChevronDown, ChevronRight, Users, Loader2, GraduationCap } from "lucide-react";
 import { cn } from "@/lib/utils";
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 // Same function as in agregar_estudiante
 const generateSchoolYears = () => {
@@ -78,6 +80,52 @@ export default function PageSections() {
         }
     };
 
+    const handleExportPDF = (section) => {
+        const students = sectionStudents[section.id] || [];
+        if (students.length === 0) {
+            alert("No hay datos de estudiantes para exportar.");
+            return;
+        }
+
+        const doc = new jsPDF();
+
+        // Header
+        doc.setFontSize(18);
+        doc.setTextColor(0, 6, 74); // Dark blue from sidebar
+        doc.text("Reporte de Sección", 14, 20);
+
+        doc.setFontSize(12);
+        doc.setTextColor(50);
+        doc.text(`Sección: ${section.nombre}`, 14, 30);
+        doc.text(`Año Escolar: ${selectedYear}`, 14, 36);
+        doc.text(`Profesor: ${section.teacher?.nombre || 'Sin asignar'}`, 14, 42);
+
+        // Table
+        const tableColumn = ["Nombre", "Cédula", "1er Lapso", "2do Lapso", "3er Lapso", "Final"];
+        const tableRows = [];
+
+        students.forEach(student => {
+            const studentData = [
+                student.nombre,
+                student.cedula,
+                student.grade1 || "-",
+                student.grade2 || "-",
+                student.grade3 || "-",
+                student.gradeFinal || "-",
+            ];
+            tableRows.push(studentData);
+        });
+
+        autoTable(doc, {
+            head: [tableColumn],
+            body: tableRows,
+            startY: 50,
+            headStyles: { fillColor: [0, 6, 74] }, // Dark blue header
+        });
+
+        doc.save(`Seccion_${section.nombre}_${selectedYear}.pdf`);
+    };
+
     return (
         <div className="flex h-screen bg-gray-50 overflow-hidden">
             <Sidebar />
@@ -142,9 +190,23 @@ export default function PageSections() {
                                     {expandedSection === section.id && (
                                         <CardContent className="pt-0 border-t">
                                             <div className="py-4">
-                                                <div className="flex items-center gap-2 mb-4">
-                                                    <Users className="h-5 w-5 text-gray-500" />
-                                                    <h4 className="font-medium">Estudiantes Inscritos en {selectedYear}</h4>
+                                                <div className="flex items-center justify-between mb-4">
+                                                    <div className="flex items-center gap-2">
+                                                        <Users className="h-5 w-5 text-gray-500" />
+                                                        <h4 className="font-medium">Estudiantes Inscritos en {selectedYear}</h4>
+                                                    </div>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleExportPDF(section);
+                                                        }}
+                                                        className="gap-2 border-blue-200 text-blue-700 hover:bg-blue-50"
+                                                    >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-file-down"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" /><polyline points="14 2 14 8 20 8" /><path d="M12 18v-6" /><path d="m9 15 3 3 3-3" /></svg>
+                                                        Exportar PDF
+                                                    </Button>
                                                 </div>
 
                                                 {loadingStudents === section.id ? (

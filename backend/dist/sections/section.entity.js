@@ -39,7 +39,7 @@ __decorate([
     __metadata("design:type", String)
 ], Section.prototype, "code", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => teacher_entity_1.Teacher, (teacher) => teacher.sections),
+    (0, typeorm_1.ManyToOne)(() => teacher_entity_1.Teacher, (teacher) => teacher.sections, { onDelete: 'CASCADE' }),
     __metadata("design:type", teacher_entity_1.Teacher)
 ], Section.prototype, "teacher", void 0);
 __decorate([
