@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { api } from "@/services/api";
 import Sidebar from "@/components/dashboard/Sidebar";
@@ -14,6 +14,14 @@ import { Badge } from "@/components/ui/badge";
 const GRADE_OPTIONS = ['', 'A', 'B', 'C', 'D', 'E'];
 
 export default function PageEstudiantes() {
+    return (
+        <Suspense fallback={<div className="flex h-screen items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+            <SearchEstudiantes />
+        </Suspense>
+    );
+}
+
+function SearchEstudiantes() {
     const searchParams = useSearchParams();
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -266,6 +274,7 @@ export default function PageEstudiantes() {
                                                                                 >
                                                                                     <X className="h-4 w-4" />
                                                                                 </Button>
+
                                                                             </div>
                                                                         ) : (
                                                                             <Button
